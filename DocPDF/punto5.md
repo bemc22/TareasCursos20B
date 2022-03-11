@@ -140,3 +140,53 @@ $$ \begin{align}
    \end{align}
 $$
 
+(c).  Explore si se pueden construir subspacios vectoriales de matrices reales e imaginarias puras.
+
+
+Tomando hasta 3 elementos del conjunto de matrices $\{ \sigma_1, \sigma_2, \sigma_3, \sigma_4 \}$
+
+$$ \sigma_1 = 
+\begin{pmatrix}
+1 &  0 \\
+0 &  0 
+\end{pmatrix}, 
+\sigma_2 = 
+\begin{pmatrix}
+0 &  1 \\
+0 &  0 
+\end{pmatrix}, 
+\sigma_3 = 
+\begin{pmatrix}
+0 &  0 \\
+1 &  0 
+\end{pmatrix},
+\sigma_4 = 
+\begin{pmatrix}
+0 &  0 \\
+0 &   1
+\end{pmatrix}
+$$
+
+y junto con el campo $K$ de los numeros reales, es posible conformar un subspacio vectorial de matrices reales puras. Analogamente, se puede realizar el mismo procedimiento para un subspacio de matrices imaginarias puras, tomando hasta 3 elementos donde el conjunto de matrices son,
+
+$$ \sigma_1 = 
+\begin{pmatrix}
+i &  0 \\
+0 &  0 
+\end{pmatrix}, 
+\sigma_2 = 
+\begin{pmatrix}
+0 &  i \\
+0 &  0 
+\end{pmatrix}, 
+\sigma_3 = 
+\begin{pmatrix}
+0 &  0 \\
+i &  0 
+\end{pmatrix},
+\sigma_4 = 
+\begin{pmatrix}
+0 &  0 \\
+0 &  i
+\end{pmatrix}
+$$
