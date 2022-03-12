@@ -298,7 +298,7 @@ $$
 Algebra matrices de Pauli
 
 $$
-\langle \sigma^i | \sigma_j \rangle = i \epsilon_{ijk} \sigma_k + \delta_{ij}\sigma_0
+\langle \sigma^i | \sigma_j \rangle = i \epsilon_{ijk} \sigma_k + \delta_{ij}\sigma_0 , \quad \delta_{ij} \begin{cases}  1 \quad i=j \\ 0 \quad \text{otherwise}\end{cases}
 $$
 
 en donde $\epsilon_{ijk}$ is the Levi-Civita symbol
@@ -310,6 +310,8 @@ $$
 &\ \ \ 0 \quad\text{otherwise} 
 \end{cases}
 $$
+ 
+y 
 
 (c).  Explore si se pueden construir subspacios vectoriales de matrices reales e imaginarias puras.
 
