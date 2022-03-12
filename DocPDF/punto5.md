@@ -130,14 +130,185 @@ $$
 
 (b). Compruebe que una base es ortogonal bajo la definición de producto interno $\langle a | b \rangle \Leftrightarrow \text{Tr}(A^{\dagger}B)$ que introducimos en los ejercicios de la misma sección
 
-$$ \begin{align}
-    \langle \sigma_1 | \sigma_2 \rangle &= (0)(0) + (0)(0)  &&= 0 \\ 
-    \langle \sigma_1 | \sigma_3 \rangle &= (0)(1) + (0)(-1) &&= 0 \\
-    \langle \sigma_1 | \sigma_0 \rangle &= (0)(1) + (0)(1)  &&= 0 \\
-    \langle \sigma_2 | \sigma_3 \rangle &= (0)(1) + (0)(-1)  &&= 0 \\
-    \langle \sigma_2 | \sigma_3 \rangle &= (0)(1) + (0)(1)  &&= 0 \\
-    \langle \sigma_3 | \sigma_0 \rangle &= (1)(1) + (-1)(1)  &&= 0 
-   \end{align}
+
+Productos internos $\langle \sigma^i | \sigma_j \rangle, i \neq j $
+
+$$ 
+\begin{align*}  \langle \sigma_1 | \sigma_2 \rangle  &= 
+\text{Tr} \bigg[
+\begin{pmatrix}
+0 &  1 \\
+1 &  0 
+\end{pmatrix} 
+\begin{pmatrix}
+0 &  -i \\
+i &  0 
+\end{pmatrix} &&\bigg] =
+\text{Tr} \bigg[
+\begin{pmatrix}
+i &  0 \\
+0 &  -i 
+\end{pmatrix} &&&\bigg] =0 \\
+\langle \sigma_1 | \sigma_3 \rangle  &= 
+\text{Tr} \bigg[
+\begin{pmatrix}
+0 &  1 \\
+1 &  0 
+\end{pmatrix} 
+\begin{pmatrix}
+1 &  0 \\
+0 &  -1 
+\end{pmatrix} &&\bigg] =  
+\text{Tr} \bigg[
+\begin{pmatrix}
+0 &  -1 \\
+1 &  0 
+\end{pmatrix} &&&\bigg] =0 \\
+\langle \sigma_1 | \sigma_0 \rangle  &= 
+\text{Tr} \bigg[
+\begin{pmatrix}
+0 &  1 \\
+1 &  0 
+\end{pmatrix} 
+\begin{pmatrix}
+1 &  0 \\
+0 &  1
+\end{pmatrix} &&\bigg] =
+\text{Tr} \bigg[
+\begin{pmatrix}
+0 &  1 \\
+1 &  0 
+\end{pmatrix} &&&\bigg] =0 \\
+\langle \sigma_2 | \sigma_3 \rangle  &= 
+\text{Tr} \bigg[
+\begin{pmatrix}
+0 &  -i \\
+i &  0 
+\end{pmatrix} 
+\begin{pmatrix}
+1 &  0 \\
+0 &  -1
+\end{pmatrix} &&\bigg] =
+\text{Tr} \bigg[
+\begin{pmatrix}
+0 &  i \\
+i &  0 
+\end{pmatrix} &&&\bigg] =0\\
+\langle \sigma_2 | \sigma_0 \rangle  &= 
+\text{Tr} \bigg[
+\begin{pmatrix}
+0 &  -i \\
+i &  0 
+\end{pmatrix} 
+\begin{pmatrix}
+1 &  0 \\
+0 &  1
+\end{pmatrix} &&\bigg] =
+\text{Tr} \bigg[
+\begin{pmatrix}
+0 &  -i \\
+i &  0 
+\end{pmatrix} &&&\bigg] =0 \\
+\langle \sigma_3 | \sigma_0 \rangle  &= 
+\text{Tr} \bigg[
+\begin{pmatrix}
+1 &  0 \\
+0 &  -1 
+\end{pmatrix} 
+\begin{pmatrix}
+1 &  0 \\
+0 &  1
+\end{pmatrix} &&\bigg] =
+\text{Tr} \bigg[
+\begin{pmatrix}
+1 &  0 \\
+0 &  -1 
+\end{pmatrix} &&&\bigg] =0
+\end{align*} 
+$$
+
+
+Productos internos $\langle \sigma^i |  \sigma_i \rangle$
+
+$$
+\begin{align}
+\langle \sigma_1 | \sigma_1 \rangle  &= 
+\text{Tr} \bigg[
+\begin{pmatrix}
+0 &  1 \\
+1 &  0 
+\end{pmatrix} 
+\begin{pmatrix}
+0 &  1 \\
+1 &  0 
+\end{pmatrix} &&\bigg] =
+\text{Tr} \bigg[
+\begin{pmatrix}
+1 &  0 \\
+0 &  1 
+\end{pmatrix} &&&\bigg] =0 \\ 
+\langle \sigma_2 | \sigma_2 \rangle  &= 
+\text{Tr} \bigg[
+\begin{pmatrix}
+0 &  -i \\
+i &  0 
+\end{pmatrix} 
+\begin{pmatrix}
+0 &  -i \\
+i &  0 
+\end{pmatrix} &&\bigg] =
+\text{Tr} \bigg[
+\begin{pmatrix}
+1 &  0 \\
+0 &  1 
+\end{pmatrix} &&&\bigg] =0 \\
+\langle \sigma_3 | \sigma_3 \rangle  &= 
+\text{Tr} \bigg[
+\begin{pmatrix}
+1 &  0 \\
+0 &  -1 
+\end{pmatrix} 
+\begin{pmatrix}
+1 &  0 \\
+0 &  -1 
+\end{pmatrix} &&\bigg] =
+\text{Tr} \bigg[
+\begin{pmatrix}
+1 &  0 \\
+0 &  1 
+\end{pmatrix} &&&\bigg] =0 \\
+\langle \sigma_0 | \sigma_0 \rangle  &= 
+\text{Tr} \bigg[
+\begin{pmatrix}
+1 &  0 \\
+0 &  1
+\end{pmatrix} 
+\begin{pmatrix}
+1 &  0 \\
+0 &  1
+\end{pmatrix} &&\bigg] =
+\text{Tr} \bigg[
+\begin{pmatrix}
+1 &  0 \\
+0 &  1 
+\end{pmatrix} &&&\bigg] =0
+\end{align}
+$$
+
+Algebra matrices de Pauli
+
+$$
+\langle \sigma^i | \sigma_j \rangle = i \epsilon_{ijk} \sigma_k + \delta_{ij}\sigma_0
+$$
+
+en donde $\epsilon_{ijk}$ is the Levi-Civita symbol
+
+$$
+\epsilon_{ijk} = \begin{cases}
+&+1      \quad\text{if $(i,j,k)$ is an even permutation of $(1,2,3)$} \\
+&-1      \quad\text{if $(i,j,k)$ is an odd permutation of $(1,2,3)$} \\
+&\ \ \ 0 \quad\text{otherwise} 
+\end{cases}
 $$
 
 (c).  Explore si se pueden construir subspacios vectoriales de matrices reales e imaginarias puras.
