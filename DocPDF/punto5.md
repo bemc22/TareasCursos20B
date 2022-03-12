@@ -52,8 +52,6 @@ $$
 2) Son linealmente independientes?
 
 
-
-
 $$ a\cdot\sigma_1 +b\cdot\sigma_2 +c\cdot\sigma_3 +d\cdot\sigma_0 = 0\\ 
 = a \begin{pmatrix}
 0 &  1 \\
