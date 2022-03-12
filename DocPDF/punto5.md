@@ -310,8 +310,6 @@ $$
 &\ \ \ 0 \quad\text{otherwise} 
 \end{cases}
 $$
- 
-y 
 
 (c).  Explore si se pueden construir subspacios vectoriales de matrices reales e imaginarias puras.
 
