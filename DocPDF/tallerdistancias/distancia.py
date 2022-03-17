@@ -25,12 +25,22 @@ reference_data = reference_data.rename(columns={'PM2.5': 'reference'})
 
 # load measure data
 
-measure_path = Path('datos/mediciones/mediciones_clg_normalsup_pm25_a_2018-11-01T00_00_00_2018-11-30T23_59_59.csv')
-measure_data = pd.read_csv(measure_path, index_col='fecha_hora_med', usecols=['fecha_hora_med', 'valor'])
-measure_data.index = pd.to_datetime(measure_data.index, format='%Y-%m-%dT%H:%M:%S.%fZ')
-measure_data['valor'] = measure_data['valor'].apply(lambda x: pd.to_numeric(x, errors='coerce')).dropna()
-measure_data.index.name = 'DateTime'
-measure_data = measure_data.rename(columns={'valor': 'measure'})
+main_measure_path = Path('datos/mediciones')
+measure_paths = [main_measure_path / f for f in listdir(main_measure_path) if isfile(join(main_measure_path, f))]
+
+measure_data = []
+for measure_path in measure_paths:
+    try:
+        measure_subdata = pd.read_csv(measure_path, index_col='fecha_hora_med', usecols=['fecha_hora_med', 'valor'])
+        measure_subdata.index = pd.to_datetime(measure_subdata.index, format='%Y-%m-%dT%H:%M:%S.%fZ')
+        measure_subdata['valor'] = measure_subdata['valor'].apply(lambda x: pd.to_numeric(x, errors='coerce')).dropna()
+        measure_subdata.index.name = 'DateTime'
+        measure_subdata = measure_subdata.rename(columns={'valor': 'measure'})
+        measure_data.append(measure_subdata)
+    except:
+        print(f'There is not data in {measure_path}')
+
+measure_data = pd.concat(measure_data)
 
 # interleave data
 
