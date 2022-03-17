@@ -33,6 +33,7 @@ for measure_path in measure_paths:
     try:
         measure_subdata = pd.read_csv(measure_path, index_col='fecha_hora_med', usecols=['fecha_hora_med', 'valor'])
         measure_subdata.index = pd.to_datetime(measure_subdata.index, format='%Y-%m-%dT%H:%M:%S.%fZ')
+        measure_subdata.index = measure_subdata.index.map(lambda t: t.replace(microsecond=0))
         measure_subdata['valor'] = measure_subdata['valor'].apply(lambda x: pd.to_numeric(x, errors='coerce')).dropna()
         measure_subdata.index.name = 'DateTime'
         measure_subdata = measure_subdata.rename(columns={'valor': 'measure'})
@@ -42,11 +43,38 @@ for measure_path in measure_paths:
 
 measure_data = pd.concat(measure_data)
 
-# interleave data
+# plot data
 
-interleave_data = pd.concat([reference_data, measure_data])
-interleave_data = interleave_data.sort_index()
+ax = measure_data.plot()
+reference_data.plot(ax=ax)
 
-interleave_data.plot(), plt.show()
+
+# define distance function
+
+def distance(reference, measure):
+    return np.sqrt(np.sum((reference - measure) ** 2))
+
+
+# moving averaging
+
+window = 50
+reference_rolling = reference_data.rolling(window=window).mean()
+measure_rolling = measure_data.rolling(window=window).mean()
+
+reference_rolling = reference_rolling[-len(measure_rolling):]
+
+ax1 = measure_rolling.plot()
+reference_rolling.plot(ax=ax1)
+
+# compute distance
+
+reference_rolling_numpy = reference_rolling.to_numpy()
+measure_rolling_numpy = measure_rolling.to_numpy()
+
+reference_rolling_numpy = np.nan_to_num(reference_rolling_numpy)
+measure_rolling_numpy = np.nan_to_num(measure_rolling_numpy)
+
+error = distance(reference_rolling_numpy, measure_rolling_numpy)
+print(error)
 
 print('Final feliz')
