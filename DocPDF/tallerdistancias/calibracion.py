@@ -82,10 +82,6 @@ for measure_path in measure_paths[1:2]:
     x = x[:, None]
     y = y[:, None]
 
-    
-    print(x.shape)
-    print(y.shape)
-
     c = (x.T@y)/(x.T @ x)
     c = np.sum(c)
 
@@ -93,12 +89,28 @@ for measure_path in measure_paths[1:2]:
     
     eje_x = np.linspace( np.min(x), np.max(x), 100)
 
+    x_cal = recta(x)
+
+    error = np.sqrt( ( x_cal - y).T @ ( x_cal - y) )
+    error = np.sum(error)
+
+
     plt.plot(eje_x, recta(eje_x), color='red', label=r"$f(\epsilon_j) = \alpha \hat{f}(\epsilon_j)$")
     plt.xlabel(r"$\hat{f}(\epsilon_j)$")
     plt.ylabel(r"$f(\epsilon_j)$")
-    plt.scatter(x, y, s=4)
+    plt.scatter(x, y, s=4, label=r"$(\hat{f}(\epsilon_j), f(\epsilon_j))$")
+    plt.title(r"$\alpha=$" + str(round(c,2)))
     plt.legend()
-    plt.show()
+    plt.savefig(f'{save_path / measure_path}/ajustelineal.png')
+    plt.close('all')
+
+    plt.plot(x, label='measure')
+    plt.plot(y, label='reference')
+    plt.plot(x_cal, label='calibrated')
+    plt.title("calibration error: " + str(round(error,2)))
+    plt.legend()
+    plt.savefig(f'{save_path / measure_path}/calibration.png')
+
     #plt.savefig(f'{save_path / measure_path}/window={window}.png')
     #plt.close('all')
 
