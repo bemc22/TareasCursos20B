@@ -113,8 +113,8 @@ for measure_path in measure_paths:
 
         for percentage in [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8]:
             n = int(percentage * len(x))
-            x_train, x_test = x[n:], x[:n]
-            y_train, y_test = y[n:], y[:n]
+            x_train, x_test = x[:n], x[n:]
+            y_train, y_test = y[:n], y[n:]
 
             print(x_train.shape, x_test.shape)
             print(y_train.shape, y_test.shape)
@@ -138,11 +138,13 @@ for measure_path in measure_paths:
             plt.savefig(
                 f'{save_path / measure_path}/calibration_points_train_{int(100 * percentage)}_test_{int(100 * (1 - percentage))}.png')
 
-            plt.figure()
-            interleave_rolling['calibrated'] = np.concatenate([y_pred, np.nan * np.zeros_like(x_train)])
-            calibrated_D = distance(y_test, y_pred)
-            interleave_rolling.plot()
-            plt.title(f'window: {window}, distance: {np.round(D, 4)}, calibrated distance: {np.round(calibrated_D)}')
+            interleave_rolling['calibrated'] = np.concatenate([np.nan * np.zeros_like(x_train), y_pred])
+            calibrated_train_D = distance(y_train, recta(x_train))
+            calibrated_test_D = distance(y_test, y_pred)
+            interleave_rolling.plot(figsize=(20, 10))
+            plt.title(f'window: {window}, distance: {np.round(D, 4)}, '
+                      f'calibrated train distance: {np.round(calibrated_train_D)}, '
+                      f'calibrated test distance: {np.round(calibrated_test_D)}')
             plt.savefig(
                 f'{save_path / measure_path}/calibration_train_{int(100 * percentage)}_test_{int(100 * (1 - percentage))}.png')
 
