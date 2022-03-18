@@ -92,7 +92,9 @@ for measure_path in measure_paths:
         eje_y = recta(eje_x)
 
         plt.figure()
-        plt.plot(eje_x, eje_y, color='red', label=r"$f(\epsilon_j) = \alpha \hat{f}(\epsilon_j)$")
+        label = r"$f(\epsilon_j) = \alpha \hat{f}(\epsilon_j)$"
+        label += f", alpha = {c}"
+        plt.plot(eje_x, eje_y, color='red', label=label)
         plt.title('')
         plt.xlabel(r"$\hat{f}(\epsilon_j)$")
         plt.ylabel(r"$f(\epsilon_j)$")
@@ -107,12 +109,12 @@ for measure_path in measure_paths:
         plt.title(f'window: {window}, distance: {np.round(D, 4)}, calibrated distance: {np.round(calibrated_D, 4)}')
         plt.savefig(f'{save_path / measure_path}/calibration_train_100_test_0.png')
 
-        # train 80% / test 20%
+        # train / test
 
         for percentage in [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8]:
             n = int(percentage * len(x))
-            x_train, x_test = x[n:], x[n:]
-            y_train, y_test = y[n:], y[n:]
+            x_train, x_test = x[n:], x[:n]
+            y_train, y_test = y[n:], y[:n]
 
             print(x_train.shape, x_test.shape)
             print(y_train.shape, y_test.shape)
@@ -121,26 +123,28 @@ for measure_path in measure_paths:
             c = np.sum(c)
 
             recta = lambda x: c * x
-            eje_x = np.linspace(np.min(x_test), np.max(x_test), 100)
-            eje_y = recta(eje_x)
+            eje_x = x_test
+            y_pred = recta(eje_x)
 
             plt.figure()
-            plt.plot(eje_x, eje_y, color='red', label=r"$f(\epsilon_j) = \alpha \hat{f}(\epsilon_j)$")
+            label = r"$f(\epsilon_j) = \alpha \hat{f}(\epsilon_j)$"
+            label += f", alpha = {np.round(c, 4)}"
+            plt.plot(eje_x, y_pred, color='red', label=label)
             plt.title('')
             plt.xlabel(r"$\hat{f}(\epsilon_j)$")
             plt.ylabel(r"$f(\epsilon_j)$")
             plt.scatter(x, y, s=4)
             plt.legend()
             plt.savefig(
-                f'{save_path / measure_path}/calibration_train_{int(100 * percentage)}_test_{int(100 * (1 - percentage))}.png')
+                f'{save_path / measure_path}/calibration_points_train_{int(100 * percentage)}_test_{int(100 * (1 - percentage))}.png')
 
             plt.figure()
-            interleave_rolling['calibrated'] = interleave_rolling['measure'].apply(recta)
-            calibrated_D = distance(interleave_rolling['reference'], interleave_rolling['calibrated'])
+            interleave_rolling['calibrated'] = np.concatenate([y_pred, np.nan * np.zeros_like(x_train)])
+            calibrated_D = distance(y_test, y_pred)
             interleave_rolling.plot()
             plt.title(f'window: {window}, distance: {np.round(D, 4)}, calibrated distance: {np.round(calibrated_D)}')
             plt.savefig(
-                f'{save_path / measure_path}/calibration_{int(100 * percentage)}_test_{int(100 * (1 - percentage))}.png')
+                f'{save_path / measure_path}/calibration_train_{int(100 * percentage)}_test_{int(100 * (1 - percentage))}.png')
 
             plt.close('all')
 
