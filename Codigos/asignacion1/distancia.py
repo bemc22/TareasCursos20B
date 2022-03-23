@@ -19,7 +19,7 @@ pd.option_context('display.max_rows', None, 'display.max_columns', None)
 # define distance function
 
 def distance(reference, measure):
-    return np.sqrt(np.sum((reference - measure) ** 2))
+    return np.sqrt(np.sum((reference - measure) ** 2)) / np.prod(reference.shape)
 
 
 # load reference data
@@ -35,6 +35,7 @@ reference_data = reference_data.rename(columns={'PM2.5': 'reference'})
 
 main_measure_path = Path('datos/mediciones')
 measure_paths = [f for f in listdir(main_measure_path) if isfile(join(main_measure_path, f))]
+measure_paths = ["mediciones_clg_normalsup_pm25_a_2018-12-01T00_00_00_2018-12-31T23_59_59.csv"]
 
 for measure_path in measure_paths:
     print(f'Evaluating {measure_path}')
