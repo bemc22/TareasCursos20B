@@ -19,7 +19,8 @@ pd.option_context('display.max_rows', None, 'display.max_columns', None)
 # define distance function
 
 def distance(reference, measure):
-    return np.sqrt(np.sum((reference - measure) ** 2))
+    return np.sqrt(np.sum((reference - measure) ** 2)) / np.prod(reference.shape)
+
 
 
 # load reference data
@@ -35,6 +36,7 @@ reference_data = reference_data.rename(columns={'PM2.5': 'reference'})
 
 main_measure_path = Path('datos/mediciones')
 measure_paths = [f for f in listdir(main_measure_path) if isfile(join(main_measure_path, f))]
+measure_paths = ["mediciones_clg_normalsup_pm25_a_2018-12-01T00_00_00_2018-12-31T23_59_59.csv"]
 
 for measure_path in measure_paths:
     print(f'Evaluating {measure_path}')
@@ -68,6 +70,7 @@ for measure_path in measure_paths:
 
         interleave_rolling = interleave.rolling(window=window, min_periods=1).mean()[window:]
         D = distance(interleave_rolling['reference'], interleave_rolling['measure'])
+        print(D)
         distances.append([window, D])
 
         y = np.array(interleave_rolling['reference'])
@@ -81,8 +84,6 @@ for measure_path in measure_paths:
         x = x[:, None]
         y = y[:, None]
 
-        print(x.shape)
-        print(y.shape)
 
         c = (x.T @ y) / (x.T @ x)
         c = np.sum(c)
@@ -116,8 +117,8 @@ for measure_path in measure_paths:
             x_train, x_test = x[:n], x[n:]
             y_train, y_test = y[:n], y[n:]
 
-            print(x_train.shape, x_test.shape)
-            print(y_train.shape, y_test.shape)
+            # print(x_train.shape, x_test.shape)
+            # print(y_train.shape, y_test.shape)
 
             c = (x_train.T @ y_train) / (x_train.T @ x_train)
             c = np.sum(c)
@@ -141,10 +142,10 @@ for measure_path in measure_paths:
             interleave_rolling['calibrated'] = np.concatenate([np.nan * np.zeros_like(x_train), y_pred])
             calibrated_train_D = distance(y_train, recta(x_train))
             calibrated_test_D = distance(y_test, y_pred)
-            interleave_rolling.plot(figsize=(20, 10))
+            interleave_rolling.plot(figsize=(10, 6))
             plt.title(f'window: {window}, distance: {np.round(D, 4)}, '
-                      f'calibrated train distance: {np.round(calibrated_train_D)}, '
-                      f'calibrated test distance: {np.round(calibrated_test_D)}')
+                      f'calibrated train distance: {np.round(calibrated_train_D, 4)}, '
+                      f'calibrated test distance: {np.round(calibrated_test_D, 4)}')
             plt.savefig(
                 f'{save_path / measure_path}/calibration_train_{int(100 * percentage)}_test_{int(100 * (1 - percentage))}.png')
 
