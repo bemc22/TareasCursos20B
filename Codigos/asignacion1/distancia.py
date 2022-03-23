@@ -64,7 +64,10 @@ for measure_path in measure_paths:
         (save_path / measure_path).mkdir(exist_ok=True, parents=True)
 
         distances = []
-        for window in np.linspace(2, len(interleave), 100).astype(int):
+
+        windows = [3, 5, 7, 9, 11, 15, 31, 61, 91, 101, 131, 161]
+        # np.linspace(2, len(interleave), 100).astype(int)
+        for window in windows:
             interleave_rolling = interleave.rolling(window=window, min_periods=1).mean()[window:]
             D = distance(interleave_rolling['reference'], interleave_rolling['measure'])
             distances.append([window, D])
