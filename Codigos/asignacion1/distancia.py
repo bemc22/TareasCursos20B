@@ -1,6 +1,7 @@
 # import libraries
 
 import os
+from itertools import product
 from os import listdir
 from os.path import isfile, join
 
@@ -11,7 +12,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
-import matplotlib.animation as animation
+import seaborn as sns
 
 pd.option_context('display.max_rows', None, 'display.max_columns', None)
 
@@ -21,6 +22,9 @@ pd.option_context('display.max_rows', None, 'display.max_columns', None)
 def distance(reference, measure):
     return np.sqrt(np.sum((reference - measure) ** 2)) / np.prod(reference.shape)
 
+windows = np.linspace(1, 601, 61).astype(int)[::4]
+strides = [1, 2, 4, 6, 8, 10, 12, 14, 16]
+type_data = ['no_interpolate', 'interpolate']
 
 # load reference data
 
@@ -60,31 +64,53 @@ for measure_path in measure_paths:
 
         # moving average (full range)
 
-        save_path = Path('resultados')
+        save_path = Path('resultados/resultados actuales')
         (save_path / measure_path).mkdir(exist_ok=True, parents=True)
 
         distances = []
 
-        windows = [3, 5, 7, 9, 11, 15, 31, 61, 91, 101, 131, 161]
         # np.linspace(2, len(interleave), 100).astype(int)
-        for window in windows:
-            interleave_rolling = interleave.rolling(window=window, min_periods=1).mean()[window:]
-            D = distance(interleave_rolling['reference'], interleave_rolling['measure'])
-            distances.append([window, D])
+        for window, stride, t_data in product(windows, strides, type_data):
+            print(f'Window={window}, stride={stride}, t_data={t_data}')
+            if t_data == 'interpolate':
+                interleave_interpolate = interleave.interpolate(method='linear')
+                interleave_rolling = interleave_interpolate.rolling(window=window, min_periods=1).mean()[window::stride]
+            else:
+                interleave_rolling = interleave.rolling(window=window, min_periods=1).mean()[window::stride]
+
+            D = np.round(distance(interleave_rolling['reference'], interleave_rolling['measure']), 4)
+            distances.append([window, stride, t_data, D])
             interleave_rolling.plot()
-            plt.title(f'window: {window}, distance: {D}')
-            plt.savefig(f'{save_path / measure_path}/window={window}.png')
+            plt.title(f'window: {window}, stride={stride}, t_data={t_data}, distance: {D}')
+            plt.savefig(f'{save_path / measure_path}/window={window}_stride={stride}_t_data={t_data}.png')
             plt.close('all')
 
         # plot window vs distance
 
-        distances = np.array(distances)
-        plt.plot(distances[:, 0], distances[:, 1]), plt.title('Error based on moving average')
-        plt.xlabel('window size'), plt.ylabel('distance')
-        plt.savefig(f'{save_path / measure_path}/performance.png')
+        table_distances = pd.DataFrame(distances, columns=['window', 'stride', 't_data', 'distance'])
+        empty_distances = table_distances.loc[table_distances['t_data'] == 'no_interpolate']
+        interpolation_distances = table_distances.loc[table_distances['t_data'] == 'interpolate']
+
+        empty_result = empty_distances.pivot(index='window', columns='stride', values='distance')
+        empty_result = empty_result.sort_index(level=0, ascending=False)
+        empty_result = empty_result.drop(labels=1)
+        interpolation_result = interpolation_distances.pivot(index='window', columns='stride', values='distance')
+        interpolation_result = interpolation_result.sort_index(level=0, ascending=False)
+
+        plt.figure(figsize=(7, 7))
+        sns.heatmap(empty_result, annot=True, fmt='.2f', cmap='viridis'), plt.title(
+            'Distance without interpolation')
+        plt.savefig(f'{save_path / measure_path}/performance_not_interpolation.png')
+
+        plt.figure(figsize=(7, 7))
+        sns.heatmap(interpolation_result, annot=True, fmt='.2f', cmap='viridis'), plt.title(
+            'Distance with interpolation')
+        plt.savefig(f'{save_path / measure_path}/performance_interpolation.png')
+
         plt.close('all')
 
     except:
         print(f'There is not data in {ms_path}')
 
 print('Final feliz')
+
