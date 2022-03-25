@@ -92,11 +92,28 @@ for measure_path in measure_paths:
         eje_x = np.linspace(np.min(x), np.max(x), 100)
         eje_y = recta(eje_x)
 
+        y_pred = recta(x)
+        error = np.abs(y - y_pred)
+        tolerancia = np.mean(error)
+        tolerancia_porcentual = 100*np.sum( error <= tolerancia ) / np.prod(error.shape)
+        tolerancia_porcentual = np.round(tolerancia_porcentual, 2)
+
+        import seaborn as sns
+        plt.figure()
+        sns.displot(error, bins=25, kde=True);
+        tol= plt.axvline(x=tolerancia, color='green', linestyle='-', label='tolerancia')
+        plt.legend(handles=[tol])
+        plt.title(r"Histograma $ |f(\epsilon_j)  - \hat{f}(\epsilon_j) | $" + " %tolerancia: " + str(tolerancia_porcentual))
+        plt.savefig(
+            f'{save_path / measure_path}/tolerancia_0.png', bbox_inches='tight')
+
         plt.figure()
         label = r"$f(\epsilon_j) = \alpha \hat{f}(\epsilon_j)$"
-        label += f", alpha = {c}"
+
         plt.plot(eje_x, eje_y, color='red', label=label)
-        plt.title('')
+        plt.plot(eje_x, eje_y+tolerancia, color='green', label='tolerancia', alpha=0.5)
+        plt.plot(eje_x, eje_y-tolerancia, color='green', alpha=0.5)
+        plt.title( f"alpha = {round(c,3)}")
         plt.xlabel(r"$\hat{f}(\epsilon_j)$")
         plt.ylabel(r"$f(\epsilon_j)$")
         plt.scatter(x, y, s=4)
@@ -109,6 +126,8 @@ for measure_path in measure_paths:
         interleave_rolling.plot()
         plt.title(f'window: {window}, distance: {np.round(D, 4)}, calibrated distance: {np.round(calibrated_D, 4)}')
         plt.savefig(f'{save_path / measure_path}/calibration_train_100_test_0.png')
+
+
 
         # train / test
 
@@ -153,11 +172,10 @@ for measure_path in measure_paths:
 
             plt.figure()
             label = r"$f(\epsilon_j) = \alpha \hat{f}(\epsilon_j)$"
-            label += f", alpha = {np.round(c, 4)}"
             plt.plot(eje_x, y_pred, color='red', label=label)
             plt.plot(eje_x, y_pred+tolerancia, color='green', label='tolerancia', alpha=0.5)
             plt.plot(eje_x, y_pred-tolerancia, color='green', alpha=0.5)
-            plt.title('')
+            plt.title( f"alpha = {np.round(c, 4)}")
             plt.xlabel(r"$\hat{f}(\epsilon_j)$")
             plt.ylabel(r"$f(\epsilon_j)$")
             plt.scatter(x, y, s=4)
