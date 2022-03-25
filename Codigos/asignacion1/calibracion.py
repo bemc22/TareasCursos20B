@@ -66,11 +66,11 @@ for measure_path in measure_paths:
         (save_path / measure_path).mkdir(exist_ok=True, parents=True)
 
         distances = []
-        window = 15
+        window = 41
+        stride = 1
 
-        interleave_rolling = interleave.rolling(window=window, min_periods=1).mean()[window:]
+        interleave_rolling = interleave.rolling(window=window, min_periods=1).mean()[window::stride]
         D = distance(interleave_rolling['reference'], interleave_rolling['measure'])
-        print(D)
         distances.append([window, D])
 
         y = np.array(interleave_rolling['reference'])
@@ -126,11 +126,37 @@ for measure_path in measure_paths:
             recta = lambda x: c * x
             eje_x = x_test
             y_pred = recta(eje_x)
+            
+            y_pred_train = recta(x_train)
+            error = np.abs(y_train - y_pred_train)
+            tolerancia = np.mean(error)
+
+            
+            y_pred_test = recta(x_test)
+            error_test = np.abs(y_test - y_pred_test)
+            tolerancia_porcentual = 100*np.sum( error_test <= tolerancia ) / np.prod(error_test.shape)
+            tolerancia_porcentual = np.round(tolerancia_porcentual, 2)
+
+            import seaborn as sns
+
+            plt.figure()
+            sns.displot(error, bins=25, kde=True);
+            tol= plt.axvline(x=tolerancia, color='green', linestyle='-', label='tolerancia')
+            plt.legend(handles=[tol])
+            plt.title(r"Histograma $ |f(\epsilon_j)  - \hat{f}(\epsilon_j) | $" + " %tolerancia: " + str(tolerancia_porcentual))
+            plt.savefig(
+                f'{save_path / measure_path}/tolerancia_train_{int(100 * percentage)}_test_{int(100 * (1 - percentage))}.png', bbox_inches='tight')
+
+
+
+
 
             plt.figure()
             label = r"$f(\epsilon_j) = \alpha \hat{f}(\epsilon_j)$"
             label += f", alpha = {np.round(c, 4)}"
             plt.plot(eje_x, y_pred, color='red', label=label)
+            plt.plot(eje_x, y_pred+tolerancia, color='green', label='tolerancia', alpha=0.5)
+            plt.plot(eje_x, y_pred-tolerancia, color='green', alpha=0.5)
             plt.title('')
             plt.xlabel(r"$\hat{f}(\epsilon_j)$")
             plt.ylabel(r"$f(\epsilon_j)$")
