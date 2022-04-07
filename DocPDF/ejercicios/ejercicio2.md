@@ -123,4 +123,43 @@ _y\langle - | + {\rangle}_y
 \end{pmatrix} 
 $$
 
+Representación mantricial $(\sigma_y)^i_j$ en la base $\{ \pm \}$
+
+$$
+(\sigma_y^{(+)(-)})^i_j  =  
+\begin{pmatrix}
+\langle + | \sigma_y | + \rangle & 
+\langle + | \sigma_y | - \rangle \\
+\langle - | \sigma_y | + \rangle & 
+\langle - | \sigma_y | - \rangle
+\end{pmatrix}
+$$
+
+$$
+\sigma_y | + \rangle = \sigma_y \Big(  \frac{1}{\sqrt{2}}[|+\rangle_y+ |-\rangle_y] \Big) = -i|-\rangle \\ 
+\sigma_y | - \rangle = \sigma_y \Big(  \frac{-i}{\sqrt{2}}[|+\rangle_y - |-\rangle_y] \Big) = -i| + \rangle
+$$
+
+$$
+(\sigma_y^{(+)(-)})^i_j  =  
+\begin{pmatrix}
+-i\langle + | - \rangle & 
+-i\langle + | + \rangle \\
+-i\langle - | - \rangle & 
+-i\langle - | + \rangle
+\end{pmatrix} =
+\begin{pmatrix}
+0 & 
+-i\\
+-i & 
+0
+\end{pmatrix}
+$$ 
+
+
+
+
+
+
+
 
