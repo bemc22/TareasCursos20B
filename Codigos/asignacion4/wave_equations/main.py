@@ -170,8 +170,6 @@ def viz(
     import time, glob, os
 
     # Clean up old movie frames
-    for filename in glob.glob('tmp_*.png'):
-        os.remove(filename)
 
     # Call solver and do the simulaton
     user_action = plot_u if animate else None
@@ -184,16 +182,33 @@ def viz(
                      libtheora='ogg')  # video formats
     filespec = 'tmp_%04d.png'
     movie_program = 'ffmpeg'  # or 'avconv'
-    for codec in codec2ext:
-        ext = codec2ext[codec]
-        cmd = '%(movie_program)s -r %(fps)d -i %(filespec)s '\
-              '-vcodec %(codec)s movie.%(ext)s' % vars()
-        os.system(cmd)
+    
+    import cv2
 
-    if tool == 'scitools':
+    # size = 512
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v') 
+    fps = 10
+    video = cv2.VideoWriter('video.avi', fourcc, fps, (640, 480))
+    
+    for filename in glob.glob('tmp_*.png'):
+        img = cv2.imread(filename)
+        video.write(img)
+        os.remove(filename)
+
+    cv2.destroyAllWindows()
+    video.release()
+
+        
+    # for codec in codec2ext:
+    #     ext = codec2ext[codec]
+    #     cmd = '%(movie_program)s -r %(fps)d -i %(filespec)s '\
+    #           '-vcodec %(codec)s movie.%(ext)s' % vars()
+    #     os.system(cmd)
+
+    # if tool == 'scitools':
         # Make an HTML play for showing the animation in a browser
-        plt.movie('tmp_*.png', encoder='html', fps=fps,
-                  output_file='movie.html')
+    # plt.movie('tmp_*.png', encoder='html', fps=fps,
+    #             output_file='movie.html')
     return cpu
 
 def guitar(C):
@@ -205,7 +220,7 @@ def guitar(C):
     wavelength = 2*L
     c = freq*wavelength
     omega = 2*np.pi*freq
-    num_periods = 1
+    num_periods = 4
     T = 2*np.pi/omega*num_periods
     # Choose dt the same as the stability limit for Nx=50
     dt = L/50./c
@@ -217,6 +232,76 @@ def guitar(C):
     cpu = viz(I, 0, 0, c, L, dt, C, T, umin, umax,
               animate=True, tool='matplotlib')
 
+
+def caso1(C):
+    """Triangular wave (pulled guitar string)."""
+    L = 20
+    x0 = 0.8*L
+    a = 5
+    freq = 440
+    wavelength = 2*L
+    c = freq*wavelength
+    omega = 2*np.pi*freq
+    num_periods = 4
+    T = 2*np.pi/omega*num_periods
+    # Choose dt the same as the stability limit for Nx=50
+    dt = L/50./c
+    v = 5
+
+    # def I(x):
+    #     return a*x/x0 if x < x0 else a/(L-x0)*(L-x)
+
+    def I(x):
+        return 0 
+
+    def V(x):
+
+        if x < L/4:
+            return (4*v*x)/L 
+        
+        if x < L/2:
+            return (4*v*( (L/2) - x ))/L
+        
+        return 0
+
+    umin = -1.2*a;  umax = -umin
+    cpu = viz(V, I, 0, c, L, dt, C, T, umin, umax,
+              animate=True, tool='matplotlib')
+
+def caso2(C):
+    """Triangular wave (pulled guitar string)."""
+    L = 20
+    x0 = 0.8*L
+    a = 0.001
+    freq = 440
+    wavelength = 2*L
+    c = freq*wavelength
+    omega = 2*np.pi*freq
+    num_periods = 4
+    T = 2*np.pi/omega*num_periods
+    # Choose dt the same as the stability limit for Nx=50
+    dt = L/50./c
+    v = 5
+
+    # def I(x):
+    #     return a*x/x0 if x < x0 else a/(L-x0)*(L-x)
+
+    def I(x):
+        return 0 
+
+    def V(x):
+
+        if x < L/4:
+            return (4*v*x)/L 
+        
+        if x < L/2:
+            return (4*v*( (L/2) - x ))/L
+        
+        return 0
+
+    umin = -1.2*a;  umax = -umin
+    cpu = viz(I, V, 0, c, L, dt, C, T, umin, umax,
+                animate=True, tool='matplotlib')
 
 def convergence_rates(
     u_exact,                 # Python function for exact solution
@@ -287,5 +372,5 @@ if __name__ == '__main__':
     except IndexError:
         C = 0.85
     print('Courant number: %.2f' % C)
-    #guitar(C)
+    caso1(C)
     test_convrate_sincos()
